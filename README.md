@@ -1,2 +1,2 @@
 # ITS
-Homework ofor ITS
+Homework for ITS
