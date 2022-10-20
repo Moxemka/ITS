@@ -25,8 +25,8 @@ def hist_distance(hist1, hist2):
         print("2 вектора должны быть одинаковы по длине")
         return
     squared_sum = 0.0
-    for i in range(0, len(hist1)): squared_sum = (hist1[i] - hist2[i]) * (hist1[i] - hist2[i])
-    return math.isqrt(squared_sum)
+    for i in range(0, len(hist1)): squared_sum += (hist1[i] - hist2[i]) * (hist1[i] - hist2[i])
+    return math.sqrt(squared_sum)
 
 #this function creates a file of hist with defined name
 def serialisaition(hist1, name):
