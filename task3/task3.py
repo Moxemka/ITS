@@ -1,7 +1,7 @@
-﻿#from unittest import result 
-from PIL import Image
-from numpy import asarray
-import math
+﻿from PIL import Image #image prossesing API
+from numpy import asarray #deafault numpy library
+import math #deafault math library
+import os
 number_of_items = 7 #number of items
 
 #this function calculates distance between 2 vectors 
@@ -15,7 +15,7 @@ def hist_distance(hist1, hist2):
 
 #this function creates a file of hist with defined name
 def serialisaition(hist1, name):
-      f = open(name + '.txt', 'w')
+      f = open('histograms/' + name + '.txt', 'w')
       for i in range(0, len(hist1)):
           f.write(str(hist1[i]) + '\n')
       f.close()
@@ -25,7 +25,7 @@ def serialisaition(hist1, name):
 def de_serialisaition(name):
     hist = []
     try:
-      f = open(name + '.txt', 'r')
+      f = open('histograms/' + name + '.txt', 'r')
     except: 
         print("file not found") 
         _hist = [0]
@@ -61,14 +61,15 @@ def setting_up():
         numpydata = asarray(img)
         parsing_data(numpydata, 'sq' + str(i))
 
-#logick for finding out what type is it
+#logic for finding out what type is it
 def type_finding_out():
-    while 1 == 1:
-        path = input()
+    j = 0
+    paths = ['user.png', 'user1.png', 'user2.png']
+    while j < 3:
         result_min = 999999999
         result_type = 'none'
         try:
-            img = Image.open(path)
+            img = Image.open(paths[j])
             numpydata = asarray(img)
             hu = parsing_data(numpydata, 'user')
             for i in range(1, number_of_items + 1):
@@ -92,7 +93,8 @@ def type_finding_out():
                     result_type = 'this is a triangle'
 
             print(result_type)
-
+            j += 1
+           
         except: print('file not found')
 
 type_finding_out()
