@@ -43,7 +43,8 @@ def parsing_data(ndata, _type, name):
     h1 = []
     for item in ndata:
         for data in item:
-            h1.append(data[0]) #adding only red channel to lower space usage
+            try: h1.append(data[0]) 
+            except: data[0, 0] #adding only red channel to lower space usage
     serialisaition(_type, h1, name)
     return h1
 
@@ -64,6 +65,8 @@ def setting_up():
         for j in range(0, len(dir_list)):
             _img = Image.open('TestData/' + headers[i] + '/' + dir_list[j]) #opening image in derictory
             img = _img.resize(size) #resizing image
+            img = img.convert('RGB') #converting to RGB file format
+
             numpydata = asarray(img) #parsing image into array of pixels with r g b channels
             parsing_data(numpydata, headers[i], 'h' + str(file_numbering))
             file_numbering += 1
@@ -77,10 +80,12 @@ def type_finding_out():
         result_min = [999999999, 999999999, 999999999]
         result_type = ['type1', 'type2', 'type3']
         #path = input() #user-defined path
+
         path = paths[j] #demo-defined path
         print(path + '\n')
+
         #program controls, we don't need it for demo
-        if path == 'learn': setting_up() 
+        if path == 'learn': setting_up()
         elif path == 'stop': break
         if path != 'learn':
 
@@ -88,6 +93,7 @@ def type_finding_out():
                 #prosessing user image
                 _img = Image.open(path) 
                 img = _img.resize(size)
+                img = img.convert('RGB')
                 numpydata = asarray(img)
                 hu = parsing_data(numpydata, 'user', 'user')
 
@@ -101,15 +107,18 @@ def type_finding_out():
                         hpr.remove(hpr[0]) #removing type from list
                         distance = hist_distance(hu, hpr)
                         #3 min distances + types
-                        if distance < result_min[0]: 
-                            result_min[0] = distance
-                            result_type[0] = _type
-                        if distance < result_min[1] and distance > result_min[0]:
-                            result_min[1] = distance
-                            result_type[1] = _type
-                        if distance < result_min[2] and distance > result_min[1]:
+                        
+                        
+                        if distance < result_min[2] and distance > result_min[1] and distance > result_min[0]:
                             result_min[2] = distance
                             result_type[2] = _type
+                        elif distance < result_min[1] and distance > result_min[0] and distance < result_min[1]:
+                            result_min[1] = distance
+                            result_type[1] = _type
+                        elif distance < result_min[0]: 
+                            result_min[0] = distance
+                            result_type[0] = _type
+                        
 
                 _max = -1
                 list_types = [0, 0, 0]
@@ -124,6 +133,8 @@ def type_finding_out():
                 for i in range(0, len(list_types) - 1):
                     if list_types[i] > _max:
                         index = i
+                    if list_types[0] == list_types[1] == list_types[2]:
+                        index = 0
                     
                 print('\n')
                 print(result_min)
@@ -131,10 +142,12 @@ def type_finding_out():
                 print(result_type)
 
                 print('\n this is a ' + result_type[index])
+
+                list_types = [0, 0, 0]
                 j += 1
            
-            except NameError: print('file not found or ' + NameError)
+            except: print('file not found')
 
 
-
+setting_up()
 type_finding_out()
