@@ -1,4 +1,6 @@
-﻿from PIL import Image #image prossesing API
+﻿from distutils.sysconfig import EXEC_PREFIX
+from collections import Counter
+from PIL import Image #image prossesing API
 from numpy import asarray #deafault numpy library
 import math #deafault math library
 import os
@@ -73,81 +75,66 @@ def setting_up():
     print('\n learning done!')
 
 #logic for finding out what type is it
-def type_finding_out():
-    j = 0
-    paths = ['user.png', 'user1.png', 'user2.png'] #path used for demo
-    while j < 3:
+def type_finding_out(path):
+        
+
+    try:
+        #prosessing user image
+        _img = Image.open(path) 
+        img = _img.resize(size)
+        img = img.convert('RGB')
+        numpydata = asarray(img)
+        hu = parsing_data(numpydata, 'user', 'user')
+
+        _files = os.listdir('histograms')
+
         result_min = [999999999, 999999999, 999999999]
-        result_type = ['type1', 'type2', 'type3']
-        #path = input() #user-defined path
+        result_types = ["type", "type", "type"]
+        for i in range(0, len(_files)):
+            if _files[i] != 'user.txt':
+                hpr = de_serialisaition(_files[i])#reading file
+                _type = hpr[0]
+                hpr.remove(hpr[0]) #removing type from list
+                distance = hist_distance(hu, hpr)
 
-        path = paths[j] #demo-defined path
-        print(path + '\n')
-
-        #program controls, we don't need it for demo
-        if path == 'learn': setting_up()
-        elif path == 'stop': break
-        if path != 'learn':
-
-            try:
-                #prosessing user image
-                _img = Image.open(path) 
-                img = _img.resize(size)
-                img = img.convert('RGB')
-                numpydata = asarray(img)
-                hu = parsing_data(numpydata, 'user', 'user')
-
-                _files = os.listdir('histograms')
-
-
-                for i in range(0, len(_files)):
-                    if _files[i] != 'user.txt':
-                        hpr = de_serialisaition(_files[i])#reading file
-                        _type = hpr[0]
-                        hpr.remove(hpr[0]) #removing type from list
-                        distance = hist_distance(hu, hpr)
-                        #3 min distances + types
+                #3 min distances + types
+                if distance < result_min[2] and distance > result_min[1] and distance > result_min[0]:
+                    result_min[2] = distance
+                    result_types[2] = _type
+                elif distance < result_min[1] and distance > result_min[0] and distance < result_min[1]:
+                    result_min[1] = distance
+                    result_types[1] = _type
+                elif distance < result_min[0]: 
+                    result_min[0] = distance
+                    result_types[0] = _type
                         
-                        
-                        if distance < result_min[2] and distance > result_min[1] and distance > result_min[0]:
-                            result_min[2] = distance
-                            result_type[2] = _type
-                        elif distance < result_min[1] and distance > result_min[0] and distance < result_min[1]:
-                            result_min[1] = distance
-                            result_type[1] = _type
-                        elif distance < result_min[0]: 
-                            result_min[0] = distance
-                            result_type[0] = _type
-                        
-
-                _max = -1
-                list_types = [0, 0, 0]
-                index = 0
-
-                #number of repetitions in 3 min types
-                for i in range(0, len(result_type) - 1):
-                    for i in range(0, len(result_type) - 1):
-                        if result_type[i] == result_type[j]: list_types[i] += 1
+        counter = Counter(result_types) #creating dictionary for most repeated types
                     
-                #finding max repetitions
-                for i in range(0, len(list_types) - 1):
-                    if list_types[i] > _max:
-                        index = i
-                    if list_types[0] == list_types[1] == list_types[2]:
-                        index = 0
-                    
-                print('\n')
-                print(result_min)
-                print('\n')
-                print(result_type)
+        print('\n')
+        print(result_min)
+        print('\n')
+        print(result_types)
+        print('\n this is a ' + max(counter, key=counter.get)) #printing max value in dctionary
 
-                print('\n this is a ' + result_type[index])
-
-                list_types = [0, 0, 0]
-                j += 1
            
-            except: print('file not found')
+    except: print('SMH((( FNF FR') 
 
 
-setting_up()
-type_finding_out()
+
+paths = ['learn', 'user.png', 'user1.png', 'user2.png'] #path used for demo
+j = 0
+while j < 4:
+    print('\ntype desired file path \nor type ''learn'' to learn new images \n')
+    #path = input() #user-defined path
+
+    path = paths[j] #demo-defined path
+    print(path + '\n')
+
+    #program controls, we don't need it for demo
+    if path == 'learn': setting_up()
+    elif path == 'stop': break
+    else:
+        type_finding_out(path)
+    j += 1
+
+        
