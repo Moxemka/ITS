@@ -110,23 +110,14 @@ for i in range(1, len(cordinates)):
     v1_y = y - pr_y
 
     _angle = turning_angle(float(v1_x), float(v1_y), float(v2_x), float(v2_y))
-    print(f"turn data: {v1_x}, {v1_y}, {v2_x}, {v2_y}")
 
     print(f"turn {_angle}")
-
-    print("time to turn: " + str(time_to_turn(_angle, angle_velocity_degs)) + "velosity =" + str(angle_velocity_degs))
-
     push_to_server(ip, port, topic, "turn", _angle)
     time.sleep(time_to_turn(_angle, angle_velocity_degs))
 
     _distance = distance(float(x), float(y), float(pr_x), float(pr_y))
 
-    print(f"move data: {x}, {y}, {pr_x}, {pr_y}")
-
     print(f"move {_distance}")
-
-    print("time to move: " + str(time_to_move(_distance, velocity_ms)) + "velosity =" + str(velocity_ms))
-
     push_to_server(ip, port, topic, "forward", _distance)
     time.sleep(time_to_move(_distance, velocity_ms))
 
