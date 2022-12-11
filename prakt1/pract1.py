@@ -1,4 +1,4 @@
-﻿from shutil import ExecError
+﻿
 import sys
 import numpy as np
 import paho.mqtt.client as paho
@@ -123,6 +123,7 @@ angle_velocity_degs = things[4]#20
 filename = things[5]#"cord.txt"
 starting_angle = 0
 
+turning_flag = 1
 
 #helping vectors for math
 v1_x = 0
@@ -155,10 +156,16 @@ for i in range(1, len(cordinates)):
     time_distance = time_to_move(_distance, velocity_ms)
 
     if math.fabs(round(_angle, 1)) == 180:
-
-        print(f"move backwards {_distance}")
-        push_to_server(ip, port, topic, "backwards", _distance, time_distance)
-        time.sleep(time_distance + 1)
+        if turning_flag % 2 == 0:
+            print(f"move backwards {_distance}")
+            push_to_server(ip, port, topic, "backwards", _distance, time_distance)
+            time.sleep(time_distance + 1)
+            turning_flag += 1
+        else:
+            print(f"move {_distance}")
+            push_to_server(ip, port, topic, "forward", _distance, time_distance)
+            time.sleep(time_distance + 1)
+            turning_flag += 0
     else:
         print(f"turn {_angle}")
         push_to_server(ip, port, topic, "turn", _angle, time_angle)
@@ -167,10 +174,11 @@ for i in range(1, len(cordinates)):
         print(f"move {_distance}")
         push_to_server(ip, port, topic, "forward", _distance, time_distance)
         time.sleep(time_distance + 1)
+        turning_flag += 1
 
     angle = starting_angle
     v2_x = v1_x
     v2_y = v1_y
-
+turning_flag = 0
 print("stop;\n\n")
-push_to_server(ip, port, topic, "stop")
+push_to_server(ip, port, topic, "stop") 
